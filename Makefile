@@ -1,5 +1,8 @@
 EXE = ttt
-OBJS = ttt.o Board.o 
+OBJS = main.o Board.o Memory.o
+
+TESTS = test.o
+TEST_OBJS = Memory.o
 
 CXX = g++
 LD  = g++
@@ -52,6 +55,13 @@ $(OBJS_DIR)/%.o: %.cpp | $(OBJS_DIR)
 -include $(OBJS_DIR)/*.d
 -include $(OBJS_DIR)/uiuc/*.d
 
+TEST_DIR = tests/
+
+$(TEST_DIR):
+	@mkdir -p $(TEST_DIR)
+
+test: $(TEST_OBJS) $(TESTS)
+	$(LD) $^ $(LDFLAGS) -o $@
 
 # Standard C++ Makefile rules:
 clean:

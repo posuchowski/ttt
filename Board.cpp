@@ -26,33 +26,29 @@ namespace ttt {
         );
 
         for ( int c = 0; c < 9; c += 3 ) {
-            // row
+ 
+            // Row
             winConditions.push_back( pow(2,c) + pow(2,c+1) + pow(2,c+2) );
-            // column
+
+            // Column
             winConditions.push_back(
                 pow(2,(c/3)) + pow(2,(c/3)+3) + pow(2,(c/3)+6)
             );
+
         }
         cerr << endl;
     }
 
-    void Board::set_X( int x ) {
-        X = x;
-    }
+    void Board::set_X( int x ) { X = x; }
 
-    void Board::set_O( int o ) {
-        O = o;
-    }
+    void Board::set_O( int o ) { O = o; }
 
-    void Board::clearScreen() {
-        const char * clearCmd = "clear";
-        system( clearCmd );
-    }
+    void Board::clearScreen() { system( "clear" ); }
 
     void Board::dump( void ) {
         cerr << "X: " << X << endl;
         cerr << "O: " << O << endl;
-        cerr << "winConditions:\n  ";
+        cerr << "winConditions:" << endl;
 
         for ( std::vector<int>::iterator it = winConditions.begin();
               it != winConditions.end(); ++it ) {
@@ -63,20 +59,15 @@ namespace ttt {
 
     void Board::cprint( void ) {
         cout << endl;
-        for ( int r = 0; r<3; r++ ) {
-            for ( int c = 0; c<3; c++ ) {
+        for ( int r = 0; r<3; ++r ) {
+            cout << "\t";
+            for ( int c = 0; c<3; ++c ) {
                 (bool)(( X >> (r*3+c) ) & 1) ? cout << " X " :
                     (bool)(( O >> (r*3+c) ) & 1 ) ? cout << " O " :
                         cout << "   ";
-                if ( c < 2 )
-                    cout << "|";
-                else
-                    cout << endl;
+                (bool)( ~c & 2 ) ? cout << "|" : cout << endl;
             }
-            if ( r < 2 )
-                cout << "-----------" << endl;
-            else
-                cout << endl;
+            (bool)( ~r & 2 ) ? cout << "\t-----------" << endl : cout << endl;
         }
     }
 
@@ -108,8 +99,6 @@ namespace ttt {
         return false;
     }
 
-    char Board::getWinner( void ) {
-        return winner;
-    }
+    char Board::getWinner( void ) { return winner; }
 
 } // namespace ttt
