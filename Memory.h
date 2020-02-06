@@ -22,13 +22,21 @@ namespace ttt {
 
     public:
 
+			int winVal, lossVal, tieVal;
+
       Memory( void );
 			void * getRootCellAddr(void);
 			void * getMovePtr(void);
 			void resetMovePtr(void);
+			void retreat(void);
       void advance(int);
       bool doesRemember(int);
+			int getMovePtrMove(void);
       int scoreMove(int);
+			void backPropagate(int);
+			void rememberWin(void);
+			void rememberLoss(void);
+			void rememberTie(void);
 
 	}; // class Memory
 

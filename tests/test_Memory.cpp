@@ -33,3 +33,42 @@ TEST_CASE( "Do we remember moving 3?", "[memory]" ) {
 	std::cerr << "Memory doesRemember first move to 3" << std::endl;
 }
 
+ttt::Memory * newmem = nullptr;
+int moves [5] = { 0, 2, 4, 7, 8 };
+
+TEST_CASE( "Create new memory", "[memory]" ) {
+	newmem = new ttt::Memory;
+	std::cerr << "\n\n================================= NEW MEMORY ===================================\n" << std::endl;
+	std::cerr << "Root = " << newmem->getRootCellAddr() << "; Move = " << newmem->getMovePtr() << "\n" << std::endl;
+	REQUIRE( newmem != memory );
+}
+
+TEST_CASE( "Play several moves", "[newmem]" ) {
+	std::cerr << std::endl << "Playing some moves..." << std::endl;
+	for ( int i=0; i<5; i++ ) {
+		newmem->advance(moves[i]);
+		std::cerr << "\t" << moves[i] << std::endl;
+	}
+	newmem->resetMovePtr();
+	std::cerr << "Reset movePtr to " << newmem->getMovePtr() << std::endl;
+	for ( int i=0; i<5; i++ ) {
+		REQUIRE( newmem->doesRemember(moves[i]) );
+		newmem->advance(moves[i]);
+		std::cerr << "We remember " << moves[i] << std::endl;
+	}
+}
+
+TEST_CASE( "Backpropagate score", "[memory]" ) {
+	newmem->rememberWin();
+	REQUIRE( newmem->getMovePtr() == newmem->getRootCellAddr() );
+}
+
+TEST_CASE( "Remember win" ) {
+	for ( int i=0; i<5; i++ ) {
+		std::cerr << "Checking score for move " << moves[i] << std::endl;
+		REQUIRE( newmem->scoreMove(moves[i]) == 1 );
+		std::cerr << "OK: " << moves[i] << " scored 1" << std::endl;
+		newmem->advance(moves[i]);
+	}
+	std::cerr << std::endl;
+}

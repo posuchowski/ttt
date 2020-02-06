@@ -7,10 +7,14 @@ namespace ttt {
 		for ( int i=0; i<9; i++ ) nextMove[i] = nullptr;
 	}
 
+	// FIXME: Option to pass *Val as param
   Memory::Memory() :
 		lastMove(-1),
 		rootCell(new MemCell),
-		movePtr(rootCell)
+		movePtr(rootCell),
+		winVal(1),
+		lossVal(-1),
+		tieVal(0)
 	{ }
 
 	void * Memory::getRootCellAddr() {
@@ -23,6 +27,7 @@ namespace ttt {
 
 	void Memory::resetMovePtr() {
 		movePtr = rootCell;
+		std::cerr << "resetMovePtr: movePtr to rootCell at " << movePtr << std::endl;
 	}
 
 	// FIXME: Throw exception instead??
@@ -35,15 +40,18 @@ namespace ttt {
 		if ( doesRemember(mv) );
 		else {
 			movePtr->nextMove[mv] = new MemCell;
+			std::cerr << "advance: Created new node " << movePtr->nextMove[mv] << " for move " << mv << std::endl;
 			movePtr->nextMove[mv]->previous = movePtr;
 		}
 		movePtr = movePtr->nextMove[mv];
+		std::cerr << "advance: For move " << mv << " moving ptr to node " << movePtr << std::endl;
 		lastMove = mv;
 	}
 
 	bool Memory::doesRemember(int mv) {
 		if ( movePtr->nextMove[mv] != nullptr )
 			return true;
+		std::cerr << "doesRemember: " << movePtr << " does NOT remember move " << mv << std::endl;
 		return false;
 	}
 
@@ -58,9 +66,37 @@ namespace ttt {
 	}
 
 	int Memory::scoreMove(int mv) {
-		if ( doesRemember(mv) )
+		if ( doesRemember(mv) ) {
+			std::cerr << "scoreMove: move " << mv << " is remembered in node " << movePtr << std::endl;
+			int s = movePtr->nextMove[mv]->score;
+			std::cerr << "scoreMove: and its score is " << s << std::endl;
 			return movePtr->nextMove[mv]->score;
+		}
+		std::cerr << "scoreMove: Returning 0 for node " << movePtr->nextMove[mv] << " instead of " << movePtr->nextMove[mv]->score << std::endl;
 		return 0;
+	}
+
+	void Memory::backPropagate(int val) {
+		do {
+			std::cerr << "backPropagate: adding " << val << " to " << movePtr << std::endl;
+			movePtr->score += val;
+			retreat();
+		}
+		while ( movePtr->previous != nullptr );
+		std::cerr << "backPropagate: adding " << val << " to " << movePtr << std::endl;
+		movePtr->score += val;
+	}
+
+	void Memory::rememberWin() {
+		if ( winVal != 0 ) backPropagate(winVal);
+	}
+
+	void Memory::rememberLoss() {
+		if ( lossVal != 0 ) backPropagate(lossVal);
+	}
+
+	void Memory::rememberTie() {
+		if ( tieVal != 0 ) backPropagate(tieVal);
 	}
 
 }
