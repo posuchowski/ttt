@@ -27,7 +27,6 @@ namespace ttt {
 
 	void Memory::resetMovePtr() {
 		movePtr = rootCell;
-		std::cerr << "resetMovePtr: movePtr to rootCell at " << movePtr << std::endl;
 	}
 
 	// FIXME: Throw exception instead??
@@ -40,18 +39,15 @@ namespace ttt {
 		if ( doesRemember(mv) );
 		else {
 			movePtr->nextMove[mv] = new MemCell;
-			std::cerr << "advance: Created new node " << movePtr->nextMove[mv] << " for move " << mv << std::endl;
 			movePtr->nextMove[mv]->previous = movePtr;
 		}
 		movePtr = movePtr->nextMove[mv];
-		std::cerr << "advance: For move " << mv << " moving ptr to node " << movePtr << std::endl;
 		lastMove = mv;
 	}
 
 	bool Memory::doesRemember(int mv) {
 		if ( movePtr->nextMove[mv] != nullptr )
 			return true;
-		std::cerr << "doesRemember: " << movePtr << " does NOT remember move " << mv << std::endl;
 		return false;
 	}
 
@@ -66,24 +62,16 @@ namespace ttt {
 	}
 
 	int Memory::scoreMove(int mv) {
-		if ( doesRemember(mv) ) {
-			std::cerr << "scoreMove: move " << mv << " is remembered in node " << movePtr << std::endl;
-			int s = movePtr->nextMove[mv]->score;
-			std::cerr << "scoreMove: and its score is " << s << std::endl;
+		if ( doesRemember(mv) )
 			return movePtr->nextMove[mv]->score;
-		}
-		std::cerr << "scoreMove: Returning 0 for node " << movePtr->nextMove[mv] << " instead of " << movePtr->nextMove[mv]->score << std::endl;
 		return 0;
 	}
 
 	void Memory::backPropagate(int val) {
 		do {
-			std::cerr << "backPropagate: adding " << val << " to " << movePtr << std::endl;
 			movePtr->score += val;
 			retreat();
-		}
-		while ( movePtr->previous != nullptr );
-		std::cerr << "backPropagate: adding " << val << " to " << movePtr << std::endl;
+		} while ( movePtr->previous != nullptr );
 		movePtr->score += val;
 	}
 
