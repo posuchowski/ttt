@@ -5,6 +5,7 @@
 ttt::Memory * memory = nullptr;
 
 TEST_CASE( "Instantiate Memory", "[memory]" ) {
+	std::cerr << "\n===== EXERCISING MEMORY =====\n" << std::endl;
 	memory = new ttt::Memory;
 	REQUIRE( memory != nullptr );
 	std::cerr << "Memory instantiated OK" << std::endl;
@@ -38,7 +39,6 @@ int moves [5] = { 0, 2, 4, 7, 8 };
 
 TEST_CASE( "Create new memory", "[memory]" ) {
 	newmem = new ttt::Memory;
-	std::cerr << "\n\n================================= NEW MEMORY ===================================\n" << std::endl;
 	std::cerr << "Root = " << newmem->getRootCellAddr() << "; Move = " << newmem->getMovePtr() << "\n" << std::endl;
 	REQUIRE( newmem != memory );
 }

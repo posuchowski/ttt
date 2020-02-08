@@ -1,21 +1,12 @@
 #pragma once
 
-#include <vector>
 #include "Board.h"
+#include "Memory.h"
 
 namespace ttt {
 
-    struct Move {
-        int gameID;
-        int X;
-        int O;
-        int move;
-        int score;
-    }
-
     private:
-        vector<Move> memory;
-        vector<Move> book;
+			Memory * memory;
 
     public:
         int makeMove( Board & );

@@ -11,7 +11,7 @@ namespace ttt {
 
     Board::Board() {
         X = O = 0;
-        winner = '\0';
+        starter = winner = '\0';
         
         // Diagonals
         winConditions.push_back(
@@ -39,11 +39,30 @@ namespace ttt {
         cerr << endl;
     }
 
+		void Board::clear() {
+				X = O = 0;
+				starter = winner = '\0';
+		}
     void Board::set_X( int x ) { X = x; }
-
+		int  Board::get_X() 			 { return X; }
     void Board::set_O( int o ) { O = o; }
+		int  Board::get_O() 			 { return O; }
 
-    void Board::clearScreen() { system( "clear" ); }
+		char Board::getStarter( void ) { return starter; }
+    char Board::getWinner( void )  { return winner; }
+		char Board::getMover( void )        { return mover; }
+
+		void Board::setMover( char symbol ) { mover = symbol; }
+
+		void Board::setStarter( char symbol ) {
+			if ( starter == '\0' ) {
+				std::cerr << "Setting Starter to " << symbol << std::endl;
+				starter = mover = symbol;
+			}
+			else {
+				throw( std::runtime_error( "Board::setStarter: starter already set!" ) );
+			}
+		}
 
     void Board::dump( void ) {
         cerr << "X: " << X << endl;
@@ -76,6 +95,8 @@ namespace ttt {
             X = X | (1 << (row * 3 + col));
         else
             O = O | (1 << (row * 3 + col));
+				history.push_back(row * 3 + col);
+				mover = (mover == 'X') ? 'O' : 'X';
     }
 
     bool Board::isOccupied( int col, int row ) {
@@ -83,6 +104,14 @@ namespace ttt {
             return true;
         return false;
     }
+
+		char Board::symbolAt( int col, int row ) {
+				if( X & (1 << (row * 3 + col) ) )
+					return 'X';
+				if( O & (1 << (row * 3 + col) ) )
+					return 'O';
+				return '\0';
+		}
 
     bool Board::hasWin( void ) {
         for ( std::vector<int>::iterator it = winConditions.begin();
@@ -98,7 +127,5 @@ namespace ttt {
         }
         return false;
     }
-
-    char Board::getWinner( void ) { return winner; }
 
 } // namespace ttt

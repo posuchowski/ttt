@@ -3,4 +3,5 @@
 #include <catch2/catch.hpp>
 
 #include "tests/test_Memory.cpp"
+#include "tests/test_Board.cpp"
 

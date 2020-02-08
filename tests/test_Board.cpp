@@ -1,48 +1,104 @@
 #include <iostream>
+#include <catch2/catch.hpp>
 #include "Board.h"
 
-using namespace ttt;
+ttt::Board * board = nullptr;
 
-using std::cout;
-using std::cerr;
-using std::endl;
-
-int main() {
-
-    Board * board = new Board;
-    cout << "Created board object." << endl;
-    board->cprint();
-
-    board->set_X( 2 );
-    cout << "Set bit 2 to X. Dump:" << endl;
-    board->dump();
-    cout << endl;
-    board->cprint();
-
-    board->set_O( 36 );
-    cout << "Set O to 36. Dump:" << endl;
-    board->dump();
-    cout << endl;
-    board->cprint();
-
-    delete board;
-    board = new Board;
-
-    cout << "OK, new Board. Let's win." << endl;
-    board->cprint();
-
-    board->set_O( (7 << 6) );
-    board->set_X( 2 + 4 + 16 );
-    
-    board->cprint();
-    cout << "Checking win..." << endl;
-
-    if ( board->hasWin() ) {
-        cout << "\tSomebody won. It was... ";
-        cout << board->getWinner() << endl;
-    }
-    else {
-        cout << "\tNO WINNER!" << endl;
-    }
-
+TEST_CASE( "Instantiate Board", "[board]" ) {
+	std::cout << "\n===== EXERCISING BOARD =====\n" << std::endl;
+	board = new ttt::Board;
+	REQUIRE( board != nullptr );
+	std::cout << "Created new Board object." << std::endl;
 }
+
+TEST_CASE( "Set board directly and check row wins", "[board]" ) {
+	// ttt::Board * newboard = new ttt::Board;
+
+	int test_boards_x[] = {
+			1+2+4, 8+16+32, 64+128+256
+	};
+	int test_boards_o[] = {
+			8+16+256, 1+4+64, 8+2+4
+	};
+
+	for ( int i=0; i<3; i++ ) {
+		board->clear();
+		board->set_X(test_boards_x[i]);
+		board->set_O(test_boards_o[i]);
+		board->cprint();
+		CHECK( board->hasWin() );
+		REQUIRE( board->getWinner() == 'X' );
+		std::cout << "X won with x repr " << board->get_X() << std::endl;
+	}
+}
+
+TEST_CASE( "Set board directly and check column wins", "[board]" ) {
+
+	int test_boards_o[] = {
+		1+8+64, 2+16+128, 4+32+256
+	};
+	int test_boards_x[] = {
+		2+16, 256+64, 1+16
+	};
+
+	for ( int i=0; i<3; i++ ) {
+		board->clear();
+		board->set_X(test_boards_x[i]);
+		board->set_O(test_boards_o[i]);
+		board->cprint();
+		CHECK( board->hasWin() );
+		REQUIRE( board->getWinner() == 'O' );
+		std::cout << "O won with o repr " << board->get_O() << std::endl;
+	}
+}
+
+TEST_CASE( "Test 0-8 diagonal win", "[board]" ) {
+	board->clear();
+	board->set_X(4+32);
+	board->set_O(1+16+256);
+	board->cprint();
+	CHECK( board->hasWin() );
+	REQUIRE( board->getWinner() == 'O' );
+	std::cout << "O won with o repr " << board->get_O() << std::endl;
+}
+
+TEST_CASE( "Test 2-6 diagonal win", "[board]" ) {
+	board->clear();
+	board->set_X(4+16+64);
+	board->set_O(1+2);
+	board->cprint();
+	CHECK( board->hasWin() );
+	REQUIRE( board->getWinner() == 'X' );
+	std::cout << "X won with x repr " << board->get_X() << std::endl;
+}
+
+TEST_CASE( "Test col, row moves", "[board]" ) {
+	using Catch::Matchers::Contains;
+	struct Move {
+		char sym;
+		int col, row;
+	};
+	Move moves[4] = {
+		{ 'X', 1, 0 },
+		{ 'O', 1, 1 },
+		{ 'X', 0, 2 },
+		{ 'O', 2, 2 }
+	};
+	for ( int i=0; i<4; i++ ) {
+		board->clear();
+		board->setStarter( moves[i].sym );
+		CHECK_THROWS_WITH(
+			board->setStarter( moves[i].sym ),
+			Contains( "Board::setStarter" ) && Contains( "already set" )
+		);
+		board->move( moves[i].sym, moves[i].col, moves[i].row );
+		board->cprint();
+		CHECK( board->isOccupied( moves[i].col, moves[i].row ) );
+		REQUIRE( board->symbolAt( moves[i].col, moves[i].row ) == moves[i].sym );
+		std::cout << moves[i].sym << " is at col: " << moves[i].col << " row: "
+			<< moves[i].row << std::endl;
+		REQUIRE( board->getMover() != moves[i].sym );
+		std::cout << "Next to move is: " << board->getMover() << std::endl;
+  }
+}
+
