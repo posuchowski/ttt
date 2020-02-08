@@ -29,8 +29,11 @@ namespace ttt {
             void cprint(void);
 
             void move(char, int, int);
+						void intMove(char, int);
             bool isOccupied(int, int);
+						bool intIsOccupied(int);
 						char symbolAt(int, int);
+						char intSymbolAt(int);
             bool hasWin(void);
 
     }; // class Board

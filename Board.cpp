@@ -91,24 +91,36 @@ namespace ttt {
     }
 
     void Board::move( char symbol, int col, int row ) {
-        if ( symbol == 'X' )
-            X = X | (1 << (row * 3 + col));
-        else
-            O = O | (1 << (row * 3 + col));
-				history.push_back(row * 3 + col);
-				mover = (mover == 'X') ? 'O' : 'X';
+				intMove( symbol, row * 3 + col );
     }
+
+		void Board::intMove( char symbol, int square ) {
+				if ( symbol == 'X' )
+						X = X | (1 << square);
+				else
+						O = O | (1 << square);
+				history.push_back(square);
+				mover = (mover == 'X') ? 'O' : 'X';
+		}
 
     bool Board::isOccupied( int col, int row ) {
-        if ( (X | O) & (1 << (row * 3 + col)) )
-            return true;
-        return false;
-    }
+				return intIsOccupied(row * 3 + col);
+		}
+
+		bool Board::intIsOccupied( int square ) {
+				if ( (X | O) & (1 << square) )
+					return true;
+				return false;
+		}
 
 		char Board::symbolAt( int col, int row ) {
-				if( X & (1 << (row * 3 + col) ) )
+				return intSymbolAt(row * 3 + col);
+		}
+
+		char Board::intSymbolAt( int square ) {
+				if ( X & (1 << square ) )
 					return 'X';
-				if( O & (1 << (row * 3 + col) ) )
+				if ( O & (1 << square ) )
 					return 'O';
 				return '\0';
 		}

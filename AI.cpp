@@ -3,8 +3,8 @@
 
 namespace ttt {
 
-    int AI::makeMove( Board & board ) {
-        return 0;
+    int AI::makeMove(Board & board) {
+			collectBoardPossibleMoves(board);
     }
 
 }
