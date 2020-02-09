@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "Board.h"
+#include "AiPlayer.h"
 
 using namespace ttt;
 
@@ -9,27 +10,55 @@ using std::cerr;
 using std::cin;
 using std::endl;
 
+struct Pieces {
+	char computer, human;
+};
+struct Statistics {
+	int wins, losses, ties;
+};
+
 const char * clearCmd = "clear";
 
-struct Pieces {
-    char human;
-    char computer;
-};    
-
-void clearScreen( void );
-void gameLoop( Pieces & );
+int gameLoop( Pieces &, AiPlayer *, char );
 void getSymbols( Pieces & );
+int getHumanMove( Board * );
+void print_statistics( Statistics & );
 
 int main() {
+
     Pieces symbols;
+		Statistics stats;
+		AiPlayer * cplayer = new AiPlayer;
+
     getSymbols( symbols );
-    gameLoop( symbols );
+		char starter = 'X';
+
+		while ( true ) {
+
+			int result = gameLoop( symbols, cplayer, starter );
+
+			if ( result == 1 )
+				stats.wins += 1;
+			else if ( result == -1 )
+				stats.losses += 1;
+			else
+				stats.ties += 1;	
+
+			print_statistics( stats );
+
+			if ( starter == 'X' )
+				starter = 'O';
+			else
+				starter = 'X';
+		}
+
     cout << "Bye now." << endl;
     return 0;
 }
 
-void clearScreen() {
-    system( clearCmd );
+void print_statistics( Statistics & s ) {
+	cout << "\n===== STATS =====\nWins:   " << s.wins << endl;
+  cout << "Losses: " << s.losses << "\nTies:   " << s.ties << endl << endl;
 }
 
 void getSymbols( Pieces & symbols ) {
@@ -57,62 +86,109 @@ void getSymbols( Pieces & symbols ) {
     cerr << "( symbols.human=" << symbols.human << " symbols.computer=" << symbols.computer << " )" << endl;
 }
 
-void gameLoop( Pieces & symbols ) {
+int gameLoop( Pieces & symbols, AiPlayer * cplayer, char starter ) {
 
     Board * board = new Board;
+		board->setStarter( starter );
+
+    cout << endl << ">>>>> Starting New Game <<<<<" << endl;
+		cplayer->onNewGame();
+    while ( true ) {
+				if ( symbols.human == starter ) {
+					board->cprint();
+					cout << "Human: "     << symbols.human
+							 << " Computer: " << symbols.computer
+							 << " Starter: "  << starter << endl;
+					int humanMove = getHumanMove( board );
+					board->intMove( symbols.human, humanMove );
+					if ( board->hasWin() or board->isFull() )
+						break;
+					board->intMove( symbols.computer, cplayer->makeMove(board) );
+					if ( board->hasWin() or board->isFull() )
+						break;
+				}
+				else {
+					board->intMove( symbols.computer, cplayer->makeMove(board) );
+					if ( board->hasWin() or board->isFull() )
+						break;
+					board->cprint();
+					cout << "Human: "     << symbols.human
+							 << " Computer: " << symbols.computer
+							 << " Starter: "  << starter << endl;
+					int humanMove = getHumanMove( board );
+					board->intMove( symbols.human, humanMove );
+					if ( board->hasWin() or board->isFull() )
+						break;
+				}
+    }
+    cout << "GAME OVER" << endl;
     board->cprint();
-    cout << endl;
-    
-    cerr << "Starting gameLoop." << endl;
+		if ( board->hasWin() ) {
+			if ( board->getWinner() == symbols.human ) {
+					cout << "Congratulations! You won!" << endl;
+					cplayer->onLoss();
+					return 1;
+			}
+			else if ( board->getWinner() == symbols.computer ) {
+					cout << "Looks like you lose again. Too bad." << endl;
+					cplayer->onWin();
+					return -1;
+			}
+		}
+		// not hasWin but isFull == tie
+		if ( board->isFull() ) {
+				cout << "It's a tie." << endl;
+				cplayer->onTie();
+				return 0;
+		}
+		cout << "Hmm. You shouldn't be seeing this message.\n" 
+			<< "Check your program!" << endl;
+		return 0;
+}
 
-    cin.ignore();
-    while ( not board->hasWin() ) {
+int getHumanMove( Board * board ) {
 
-        clearScreen();
-        cout << endl;
-        board->cprint();
-        cout << "\nYour move:" << endl;
+	int moveCol, moveRow;
+	bool validMove = false;
 
-        int moveCol, moveRow;
-        do {
-            cout << "  column: ";
-            if ( cin >> moveCol ) {
-                ;
-            }
-            else {
-                cin.clear();
-                cin.ignore();
-                cout << endl << "Your typing is incomprehensible to me. Enter a column between 1 and 3." << endl;
-                board->cprint();
-            }
-        } while ( (moveCol < 1) or (moveCol > 3) );
+	do { // while ( not validMove )
 
-        do {
-            cout << "  row   : ";
-            if ( cin >> moveRow ) {
-                ;
-            }
-            else {
-                cin.clear();
-                cin.ignore();
-                cout << endl << "There's nothing I can do without an integer. Enter a row between 1 and 3." << endl;
-            }
-        } while ( (moveRow < 1) or (moveRow > 3) );
+		cout << "\nEnter your move:" << endl;
 
-        if ( board->isOccupied( moveCol-1, moveRow-1 ) ) {
-            cout << "I can't let you do that, Dave. That space is occupied." << endl;
-        }
-        else {
-            board->move( symbols.human, moveCol-1, moveRow-1 );
-        }
-    } // while ( not board->hasWin() )
+		do {
+				cout << "  column (1-3): ";
+				if ( cin >> moveCol ) {
+						;
+				}
+				else {
+						cin.clear();
+						cin.ignore();
+						cout << endl << "Your typing is incomprehensible to me. Enter a column between 1 and 3." << endl;
+				}
+		} while ( (moveCol < 1) or (moveCol > 3) );
 
-    clearScreen();
-    cout << " --- GAME OVER ---" << endl;
-    board->cprint();
-    if ( board->getWinner() == symbols.human )
-        cout << "Congratulations! You won!" << endl;
-    else
-        cout << "Looks like you lose again. Too bad." << endl;
+		do {
+				cout << "  row    (1-3): ";
+				if ( cin >> moveRow ) {
+						;
+				}
+				else {
+						cin.clear();
+						cin.ignore();
+						cout << endl << "There's nothing I can do without an integer. Enter a row between 1 and 3." << endl;
+				}
+		} while ( (moveRow < 1) or (moveRow > 3) );
+
+		moveRow -= 1; moveCol -=1;
+		if ( board->isOccupied( moveCol, moveRow ) ) {
+				cout << "I can't let you do that, Dave. That space is occupied." << endl;
+		}
+		else {
+				validMove = true;
+		}
+
+	} while ( not validMove );
+
+	return (moveRow * 3) + moveCol;
 }
 

@@ -9,6 +9,7 @@ namespace ttt {
 			class MemCell {
 				public:
 					int score;
+					int moveNum;
 					MemCell * nextMove[9];
 					MemCell * previous;
 					MemCell();
@@ -33,7 +34,7 @@ namespace ttt {
       bool doesRemember(int);
 			int getMovePtrMove(void);
       int scoreMove(int);
-			void backPropagate(int);
+			void backPropagate(int, int);
 			void rememberWin(void);
 			void rememberLoss(void);
 			void rememberTie(void);

@@ -50,7 +50,7 @@ namespace ttt {
 
 		char Board::getStarter( void ) { return starter; }
     char Board::getWinner( void )  { return winner; }
-		char Board::getMover( void )        { return mover; }
+		char Board::getMover( void )   { return mover; }
 
 		void Board::setMover( char symbol ) { mover = symbol; }
 
@@ -103,8 +103,29 @@ namespace ttt {
 				mover = (mover == 'X') ? 'O' : 'X';
 		}
 
+		void Board::undoMove() {
+			int square = history.back();
+			if ( mover == 'X' ) {
+				mover = 'O';
+				undoMoveO( square );
+			}
+			else {
+				mover = 'X';
+				undoMoveX( square );
+			}
+			history.pop_back();
+		}
+
+		void Board::undoMoveX( int square ) {
+			set_X( get_X() - (1 << square) );
+		}
+
+		void Board::undoMoveO( int square ) {
+			set_O( get_O() - (1 << square) );
+		}
+
     bool Board::isOccupied( int col, int row ) {
-				return intIsOccupied(row * 3 + col);
+			return intIsOccupied(row * 3 + col);
 		}
 
 		bool Board::intIsOccupied( int square ) {
@@ -140,4 +161,17 @@ namespace ttt {
         return false;
     }
 
+		bool Board::isFull( void ) {
+			if ( (X | O) == 511 )
+				return true;
+			return false;
+		}
+
+		int Board::getLastMove( void ) {
+			if ( history.size() > 0 )
+				return history[history.size()-1];
+			return -1;
+		}
+
 } // namespace ttt
+

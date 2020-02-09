@@ -3,7 +3,7 @@
 
 namespace ttt {
 
-	Memory::MemCell::MemCell() : previous(nullptr), score(0) {
+	Memory::MemCell::MemCell() : score(0), moveNum(1), previous(nullptr) {
 		for ( int i=0; i<9; i++ ) nextMove[i] = nullptr;
 	}
 
@@ -39,6 +39,7 @@ namespace ttt {
 		if ( doesRemember(mv) );
 		else {
 			movePtr->nextMove[mv] = new MemCell;
+			movePtr->nextMove[mv]->moveNum  = (movePtr->moveNum)+1;
 			movePtr->nextMove[mv]->previous = movePtr;
 		}
 		movePtr = movePtr->nextMove[mv];
@@ -67,24 +68,30 @@ namespace ttt {
 		return 0;
 	}
 
-	void Memory::backPropagate(int val) {
+	void Memory::backPropagate(int val1, int val2) {
+		int val = val1;
 		do {
-			movePtr->score += val;
+			movePtr->score += (val * movePtr->moveNum);
+			// std::cerr << "Memory: setting cell " << movePtr << " to " << movePtr->score << std::endl;
+			if ( val == val1 ) 
+				val = val2;
+			else
+				val = val1;
 			retreat();
 		} while ( movePtr->previous != nullptr );
-		movePtr->score += val;
+		// movePtr->score += val;
 	}
 
 	void Memory::rememberWin() {
-		if ( winVal != 0 ) backPropagate(winVal);
+		if ( winVal != 0 ) backPropagate(winVal, lossVal);
 	}
 
 	void Memory::rememberLoss() {
-		if ( lossVal != 0 ) backPropagate(lossVal);
+		if ( lossVal != 0 ) backPropagate(lossVal, winVal);
 	}
 
 	void Memory::rememberTie() {
-		if ( tieVal != 0 ) backPropagate(tieVal);
+		;
 	}
 
 }

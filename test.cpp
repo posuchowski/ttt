@@ -4,4 +4,5 @@
 
 #include "tests/test_Memory.cpp"
 #include "tests/test_Board.cpp"
+#include "tests/test_AiPlayer.cpp"
 

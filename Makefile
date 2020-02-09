@@ -1,6 +1,7 @@
 EXE = ttt
-OBJS = main.o Board.o Memory.o
+OBJS = main.o Board.o Memory.o AiPlayer.o
 
+TEST = test
 TESTS = test.o
 TEST_OBJS = Memory.o
 

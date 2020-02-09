@@ -30,11 +30,16 @@ namespace ttt {
 
             void move(char, int, int);
 						void intMove(char, int);
+						void undoMove(void);
+						void undoMoveX(int);
+						void undoMoveO(int);
             bool isOccupied(int, int);
 						bool intIsOccupied(int);
 						char symbolAt(int, int);
 						char intSymbolAt(int);
             bool hasWin(void);
+						bool isFull(void);
+						int getLastMove(void);
 
     }; // class Board
 
