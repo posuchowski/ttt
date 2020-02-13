@@ -15,9 +15,9 @@ namespace ttt {
             Board();
 						void clear(void);
             void set_X(int);
-						int get_X(void);
+						int  get_X(void);
             void set_O(int);
-						int get_O(void);
+						int  get_O(void);
 
 						void setMover(char);
 						char getMover(void);

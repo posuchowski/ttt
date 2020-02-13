@@ -38,6 +38,14 @@ namespace ttt {
 			}
 		}
 
+		/*
+  		 Just iterating and calling vector::erase won't work,
+		   due to the end of the vector being altered. The beginning
+			 is sound, so we just start where we left off before erase.
+		
+		   FIXME: Is there a more efficient way to do this?
+				      (Although the size is quite small, this is show code.)
+		*/
 		void AiPlayer::dropLowerThanHighest() {
 			std::vector<AiMove *>::iterator it, last = possibleMoves.begin();
 			bool erased = true;
@@ -104,10 +112,10 @@ namespace ttt {
 		}
 
 		int AiPlayer::returnRandomMove() {
-			std::cerr << "AiPlayer:: choosing between " << possibleMoves.size() << " moves..." << std::endl;
+			// std::cerr << "AiPlayer:: choosing between " << possibleMoves.size() << " moves..." << std::endl;
 			srand( time(NULL) );
 			int r = rand() % possibleMoves.size();
-			std::cerr << "AiPlayer: returning move #" << r << std::endl;
+			// std::cerr << "AiPlayer: returning move #" << r << std::endl;
 			return possibleMoves[r]->move;
 		}
 
@@ -136,7 +144,7 @@ namespace ttt {
 			}
 
 			dumpMoveScores( "(FINAL)" );
-			std::cerr << "AiPlayer: advancing move " << move << std::endl;
+			// std::cerr << "AiPlayer: advancing move " << move << std::endl;
 			memory->advance( move );
 			return move;
     }
