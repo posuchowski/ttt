@@ -6,7 +6,7 @@ ttt::Board * board = nullptr;
 
 TEST_CASE( "Instantiate Board", "[board]" ) {
 	std::cout << "\n===== EXERCISING BOARD =====\n" << std::endl;
-	board = new ttt::Board;
+	board = new ttt::Board( 0, 0 );
 	REQUIRE( board != nullptr );
 	std::cout << "Created new Board object." << std::endl;
 }
@@ -100,5 +100,33 @@ TEST_CASE( "Test col, row moves", "[board]" ) {
 		REQUIRE( board->getMover() != moves[i].sym );
 		std::cout << "Next to move is: " << board->getMover() << std::endl;
   }
+}
+
+TEST_CASE( "Check full with tie", "[board]" ) {
+	/*
+   *   X | O | X
+   *   ----------
+   *   O | O | X
+   *   ----------
+   *   X | X | O
+   */
+	struct Move {
+		char sym;
+		int col, row;
+	} moves[9] = {
+		{ 'X', 0, 0 }, { 'O', 1, 0 },
+		{ 'X', 2, 0 }, { 'O', 0, 1 },
+		{ 'X', 2, 1 }, { 'O', 1, 1 },
+		{ 'X', 0, 2 }, { 'O', 2, 2 },
+		{ 'X', 1, 2 }
+	};
+	board->clear();
+	for ( int i=0; i<9; i++ ) {
+		board->move( moves[i].sym, moves[i].col, moves[i].row );
+	}
+	board->cprint();
+	REQUIRE( board->hasWin() == false );
+	REQUIRE( board->isFull() == true  );
+	REQUIRE( board->hasTie() == true  );
 }
 

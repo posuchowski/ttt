@@ -26,8 +26,8 @@ void print_statistics( Statistics & );
 
 int main() {
 
-    Pieces symbols;
-		Statistics stats;
+    Pieces symbols = { 'X', 'O' };
+		Statistics stats = { 0, 0, 0 };
 		AiPlayer * cplayer = new AiPlayer;
 
     getSymbols( symbols );
