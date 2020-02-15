@@ -1,5 +1,5 @@
 EXE = ttt
-OBJS = main.o Board.o Memory.o AiPlayer.o
+OBJS = main.o Board.o Memory.o AiPlayer.o BigBoard.o
 
 TEST = test
 TESTS = test.o
@@ -66,7 +66,7 @@ test: $(TEST_OBJS) $(TESTS)
 
 # Standard C++ Makefile rules:
 clean:
-	rm -rf $(EXE) $(TEST) $(OBJS_DIR) $(CLEAN_RM) *.o *.d
+	rm -rf $(EXE) $(TEST) $(OBJS_DIR) $(CLEAN_RM) *.o *.d *.gch
 
 tidy: clean
 	rm -rf doc

@@ -18,8 +18,8 @@ namespace ttt {
 				locationX( 0 ),
 				locationY( 0 ),
 				starter('\0'),
-				winner('\0'),
-				mover('\0')
+				mover('\0'),
+				winner('\0')
 		{
 			setWinConditions();
 		}
@@ -33,8 +33,8 @@ namespace ttt {
 				locationX( locX ),
 				locationY( locY ),
 				starter('\0'),
-				winner('\0'),
-				mover('\0')
+				mover('\0'),
+				winner('\0')
 		{
 			setWinConditions();
 		}
