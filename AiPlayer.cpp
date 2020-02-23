@@ -143,7 +143,7 @@ namespace ttt {
 				move = possibleMoves[0]->move;
 			}
 
-			dumpMoveScores( "(FINAL)" );
+			// dumpMoveScores( "(FINAL)" );
 			// std::cerr << "AiPlayer: advancing move " << move << std::endl;
 			memory->advance( move );
 			return move;

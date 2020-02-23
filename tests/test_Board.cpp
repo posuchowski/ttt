@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <catch2/catch.hpp>
 #include "Board.h"
 
@@ -25,7 +26,7 @@ TEST_CASE( "Set board directly and check row wins", "[board]" ) {
 		board->clear();
 		board->set_X(test_boards_x[i]);
 		board->set_O(test_boards_o[i]);
-		board->cprint();
+		std::cout << "BOARD: " << board->toString() << std::endl;
 		CHECK( board->hasWin() );
 		REQUIRE( board->getWinner() == 'X' );
 		std::cout << "X won with x repr " << board->get_X() << std::endl;
@@ -45,7 +46,7 @@ TEST_CASE( "Set board directly and check column wins", "[board]" ) {
 		board->clear();
 		board->set_X(test_boards_x[i]);
 		board->set_O(test_boards_o[i]);
-		board->cprint();
+		std::cout << "BOARD: " << board->toString() << std::endl;
 		CHECK( board->hasWin() );
 		REQUIRE( board->getWinner() == 'O' );
 		std::cout << "O won with o repr " << board->get_O() << std::endl;
@@ -56,7 +57,7 @@ TEST_CASE( "Test 0-8 diagonal win", "[board]" ) {
 	board->clear();
 	board->set_X(4+32);
 	board->set_O(1+16+256);
-	board->cprint();
+	std::cout << "BOARD: " << board->toString() << std::endl;
 	CHECK( board->hasWin() );
 	REQUIRE( board->getWinner() == 'O' );
 	std::cout << "O won with o repr " << board->get_O() << std::endl;
@@ -66,7 +67,7 @@ TEST_CASE( "Test 2-6 diagonal win", "[board]" ) {
 	board->clear();
 	board->set_X(4+16+64);
 	board->set_O(1+2);
-	board->cprint();
+	std::cout << "BOARD: " << board->toString() << std::endl;
 	CHECK( board->hasWin() );
 	REQUIRE( board->getWinner() == 'X' );
 	std::cout << "X won with x repr " << board->get_X() << std::endl;
@@ -92,7 +93,7 @@ TEST_CASE( "Test col, row moves", "[board]" ) {
 			Contains( "Board::setStarter" ) && Contains( "already set" )
 		);
 		board->move( moves[i].sym, moves[i].col, moves[i].row );
-		board->cprint();
+		std::cout << "BOARD: " << board->toString() << std::endl;
 		CHECK( board->isOccupied( moves[i].col, moves[i].row ) );
 		REQUIRE( board->symbolAt( moves[i].col, moves[i].row ) == moves[i].sym );
 		std::cout << moves[i].sym << " is at col: " << moves[i].col << " row: "
@@ -124,9 +125,15 @@ TEST_CASE( "Check full with tie", "[board]" ) {
 	for ( int i=0; i<9; i++ ) {
 		board->move( moves[i].sym, moves[i].col, moves[i].row );
 	}
-	board->cprint();
+	std::cout << "BOARD: " << board->toString() << std::endl;
 	REQUIRE( board->hasWin() == false );
 	REQUIRE( board->isFull() == true  );
 	REQUIRE( board->hasTie() == true  );
 }
+
+TEST_CASE( "Check if toString representation is correct", "[board]" ) {
+	std::string reprFromPreviousTest = "XOXOOXXXO";
+	REQUIRE( board->toString() == reprFromPreviousTest );
+}
+
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 namespace ttt {
 
@@ -40,8 +41,9 @@ namespace ttt {
 
 						void setStarter(char);
 
-            void dump(void);
-            void cprint(void);
+						std::string toString(void);
+         // void dump(void);
+         // void cprint(void);
 
             void move(char, int, int);
 						void intMove(char, int);

@@ -1,0 +1,15 @@
+# TODO
+
+KEY:
+	- = not started
+	i = in progress
+
+2020-02-15
+==========
+i Make BigBoard work and test correctly.
+i Refactor main.cpp to use ConsoleUI.
+- Decide whether or not to use struct Move (probably yes).
+- Make CursesUI class.
+- Make main.cpp compile to use either ConsoleUI or CursesUI based on -Dcurses or -Dconsole.
+- Consider enventually making a QtUI.
+

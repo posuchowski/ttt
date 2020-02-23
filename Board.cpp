@@ -1,13 +1,10 @@
-#include <iostream>
+#include <stdexcept>
+#include <string>
 #include <math.h>
 #include <stdlib.h>
 #include "Board.h"
 
 namespace ttt {
-
-    using std::cout;
-    using std::cerr;
-    using std::endl;
 
 		Board::Board() :
 				X(0),
@@ -65,12 +62,10 @@ namespace ttt {
             );
 
         }
-        cerr << endl;
     }
 
     void Board::checkWin( void ) {
-        for ( std::vector<int>::iterator it = winConditions.begin();
-                it != winConditions.end(); ++it ) {
+        for ( auto it = winConditions.begin(); it != winConditions.end(); ++it ) {
             if ( (X & *it) == *it ) {
 								gameWon = true;
                 winner = 'X';
@@ -128,7 +123,6 @@ namespace ttt {
 
 		void Board::setStarter( char symbol ) {
 			if ( starter == '\0' ) {
-				std::cerr << "Setting Starter to " << symbol << std::endl;
 				starter = mover = symbol;
 			}
 			else {
@@ -136,31 +130,18 @@ namespace ttt {
 			}
 		}
 
-    void Board::dump( void ) {
-        cerr << "X: " << X << endl;
-        cerr << "O: " << O << endl;
-        cerr << "winConditions:" << endl;
-
-        for ( std::vector<int>::iterator it = winConditions.begin();
-              it != winConditions.end(); ++it ) {
-            cerr << "\tint repr: " << *it << endl;
-        }
-        cerr << endl;
-    }
-
-    void Board::cprint( void ) {
-        cout << endl;
-        for ( int r = 0; r<3; ++r ) {
-            cout << "\t";
-            for ( int c = 0; c<3; ++c ) {
-                (bool)(( X >> (r*3+c) ) & 1) ? cout << " X " :
-                    (bool)(( O >> (r*3+c) ) & 1 ) ? cout << " O " :
-                        cout << "   ";
-                (bool)( ~c & 2 ) ? cout << "|" : cout << endl;
-            }
-            (bool)( ~r & 2 ) ? cout << "\t-----------" << endl : cout << endl;
-        }
-    }
+		std::string Board::toString( void ) {
+				std::string repr = "---------";
+				for ( int i=0; i<9; i++ ) {
+					if ( (X >> i) & 1 ) {
+						repr.replace( i, 1, 1, 'X' );
+					}
+					else if ( (O >> i) & 1 ) {
+						repr.replace( i, 1, 1, 'O' );
+					}
+				}
+				return repr;
+		}
 
     void Board::move( char symbol, int col, int row ) {
 				intMove( symbol, row * 3 + col );

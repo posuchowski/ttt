@@ -1,5 +1,5 @@
 EXE = ttt
-OBJS = main.o Board.o Memory.o AiPlayer.o BigBoard.o
+OBJS = main.o Board.o Memory.o AiPlayer.o BigBoard.o ConsoleUI.o
 
 TEST = test
 TESTS = test.o
